@@ -7,6 +7,9 @@ and its repo [`multi-agent-systems-failure-taxonomy/MAST`](https://github.com/mu
 
 Every number below is produced by [`audit.py`](audit.py). Nothing is hand-entered.
 
+Reported upstream: [MAST issue #18](https://github.com/multi-agent-systems-failure-taxonomy/MAST/issues/18)
+· [dataset discussion #3](https://huggingface.co/datasets/mcemri/MAST-Data/discussions/3)
+
 ```bash
 python audit.py                  # downloads to ./data if absent, prints the report
 python audit.py --skip-full      # skip the 199 MB file (checks A–D, F, G)

@@ -1,8 +1,8 @@
 <!--
-Post this as a new Discussion on https://huggingface.co/datasets/mcemri/MAST-Data
-  Community tab -> New discussion
-Title suggestion is the first line; the body is everything below the rule.
-Requires being signed in to HuggingFace as yourself.
+POSTED 2026-08-23 as discussion #3:
+https://huggingface.co/datasets/mcemri/MAST-Data/discussions/3
+
+Kept here so the wording stays versioned alongside the findings it refers to.
 -->
 
 # Title
