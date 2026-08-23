@@ -1,0 +1,106 @@
+MAD / MAST dataset audit
+data directory: C:\dev\mad-audit\data
+
+========================================================================
+A - File identity
+========================================================================
+  MAD_human_labelled_dataset.json             2.7 MB  sha256=30a0c4075078e9a1...
+  MAD_full_dataset.json                     199.6 MB  sha256=d636ac63dfc1c6af...
+
+========================================================================
+B - How many taxonomy versions are in the human-labelled file
+========================================================================
+  round distribution:
+    Round 1                5 records
+    Round 2                5 records
+    Round 3                5 records
+    Generlazability        4 records
+
+  distinct code sets: 3
+    18 modes |  5 records | rounds: ['Round 1']
+    17 modes | 10 records | rounds: ['Round 2', 'Round 3']
+    14 modes |  4 records | rounds: ['Generlazability']
+
+========================================================================
+C - Mapping each version onto MAST-14 (by description identity)
+========================================================================
+  reference version: 'Generlazability' (14 modes)
+
+  MAST-14                                            Round 1   Round 2/Round 3
+  ----------------------------------------------------------------------------
+  1.1 Disobey Task Specification                       1.1 =             1.1 =
+  1.2 Disobey Role Specification                       2.6               1.7  
+  1.3 Step Repetition                                  2.2               1.5  
+  1.4 Loss of Conversation History                     2.3               1.6  
+  1.5 Unaware of Termination Conditions                1.5 =             1.3  
+  2.1 Conversation reset                               2.4               2.1 =
+  2.2 Fail to ask for clarification                    1.4               2.2 =
+  2.3 Task derailment                                  2.5               2.3 =
+  2.4 Information Witholding                           3.2               2.6  
+  2.5 Ignored Other Agents' Input                      3.3               2.7  
+  2.6 Reasoning-Action Mismatch                        1.2               1.2  
+  3.1 Premature Termination                            4.1               3.1 =
+  3.2 No or Incomplete Verification                    4.3               3.2 =
+  3.3 Incorrect Verification                           4.2               3.3 =
+  ----------------------------------------------------------------------------
+  codes unchanged vs MAST-14 - Round 1: 2/14
+  codes unchanged vs MAST-14 - Round 2/Round 3: 7/14
+
+  Round 1: 4 modes not carried into MAST-14
+     - 1.3 Undetected conversation ambiguities and contradictions
+     - 2.1 Unbatched repetitive execution
+     - 3.1 Disagreement induced inaction
+     - 3.4 Waiting for known information
+  Round 2/Round 3: 3 modes not carried into MAST-14
+     - 1.4 Unbatched repetitive execution
+     - 2.4 Undetected conversation ambiguities and contradictions
+     - 2.5 Disagreement induced inaction
+
+========================================================================
+D - Duplicate annotation blocks in the human-labelled file
+========================================================================
+  records: 19   distinct annotation blocks: 8
+  records sharing their block with another: 18
+
+    07f422a42ed0  x3  rounds=['Round 1']  frameworks=['AG2', 'AppWorld', 'HyperAgent']
+    90c3bdacac14  x3  rounds=['Round 2']  frameworks=['AG2', 'AppWorld', 'HyperAgent']
+    cb93c1a8f4e0  x3  rounds=['Round 3']  frameworks=['AG2', 'AppWorld', 'HyperAgent']
+    6872e898cf28  x3  rounds=['Generlazability']  frameworks=['ChatDev', 'GAIA', 'MetaGPT']
+    ef673a017baa  x2  rounds=['Round 1']  frameworks=['ChatDev', 'MetaGPT']
+    2b6e51b0b4d9  x2  rounds=['Round 2']  frameworks=['ChatDev', 'MetaGPT']
+    0585e503554c  x2  rounds=['Round 3']  frameworks=['ChatDev', 'MetaGPT']
+
+  all duplicates within a single round: True
+  all duplicates span multiple frameworks: True
+
+========================================================================
+F - GitHub traces/ vs HF records
+========================================================================
+  692c77d_1    vs traces/AppWorld/692c77d_1.txt      HF= 26712 GH= 26712  identical=True
+  cf6abd2_1    vs traces/AppWorld/cf6abd2_1.txt      HF= 34563 GH= 34563  identical=True
+  b119b1f_2    vs traces/AppWorld/b119b1f_1.txt      HF= 33931 GH= 26237  identical=False
+
+========================================================================
+G - Repo definitions.txt vs the published taxonomy
+========================================================================
+  code  definitions.txt                       published (paper / dataset card)
+  3.1   Premature Termination                 Premature Termination   match
+  3.2   Weak Verification                     No or Incomplete Verification   DIFFERS
+  3.3   No or Incorrect Verification          Incorrect Verification   DIFFERS
+
+========================================================================
+E - Full dataset integrity
+========================================================================
+  records: 1642
+  trace bodies: 1642 distinct / 1642   records in repeats: 0
+  (mas_name, llm_name, trace_id) distinct: 1522 / 1642
+    colliding keys: 120  records covered: 240
+      example: ('ChatDev', 'GPT-4o', 0) x2
+      example: ('ChatDev', 'GPT-4o', 1) x2
+      example: ('ChatDev', 'GPT-4o', 2) x2
+  mast_annotation: 453 distinct blocks / 1642
+    largest block: 401 records, flagged modes = NONE (all zero)
+    -> label vector is 14-bit; repetition is expected, NOT a defect on its own
+  records containing a null label: 4
+
+machine-readable output: results.json

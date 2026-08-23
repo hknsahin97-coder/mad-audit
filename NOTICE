@@ -1,0 +1,11 @@
+This repository audits the MAD dataset, published by the authors of
+"Why Do Multi-Agent LLM Systems Fail?" (arXiv:2503.13657).
+
+  Dataset : https://huggingface.co/datasets/mcemri/MAST-Data
+  Licence : CC-BY-4.0
+  Code    : https://github.com/multi-agent-systems-failure-taxonomy/MAST
+
+No dataset files are redistributed here; audit.py downloads them from the
+original source. The MIT licence in LICENSE covers only the audit code and
+write-up in this repository. Attribution for the data belongs to the MAD
+authors.

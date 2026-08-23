@@ -1,0 +1,467 @@
+{
+  "provenance": {
+    "human": {
+      "file": "MAD_human_labelled_dataset.json",
+      "sha256": "30a0c4075078e9a1b8c39bc608d2b5156cc64c6bda1f6fd262786eb81ff4a286",
+      "bytes": 2662908
+    },
+    "full": {
+      "file": "MAD_full_dataset.json",
+      "sha256": "d636ac63dfc1c6af2d312e862f4b7d383b62d3898d431ccd0e7a79d21d85406f",
+      "bytes": 199574367
+    }
+  },
+  "taxonomy_versions": [
+    {
+      "n_modes": 18,
+      "n_records": 5,
+      "rounds": [
+        "Round 1"
+      ],
+      "codes": [
+        "1.1",
+        "1.2",
+        "1.3",
+        "1.4",
+        "1.5",
+        "2.1",
+        "2.2",
+        "2.3",
+        "2.4",
+        "2.5",
+        "2.6",
+        "3.1",
+        "3.2",
+        "3.3",
+        "3.4",
+        "4.1",
+        "4.3",
+        "4.2"
+      ]
+    },
+    {
+      "n_modes": 17,
+      "n_records": 10,
+      "rounds": [
+        "Round 2",
+        "Round 3"
+      ],
+      "codes": [
+        "1.1",
+        "1.2",
+        "1.3",
+        "1.4",
+        "1.5",
+        "1.6",
+        "1.7",
+        "2.1",
+        "2.2",
+        "2.3",
+        "2.4",
+        "2.5",
+        "2.6",
+        "2.7",
+        "3.1",
+        "3.2",
+        "3.3"
+      ]
+    },
+    {
+      "n_modes": 14,
+      "n_records": 4,
+      "rounds": [
+        "Generlazability"
+      ],
+      "codes": [
+        "1.1",
+        "1.2",
+        "1.3",
+        "1.4",
+        "1.5",
+        "2.1",
+        "2.2",
+        "2.3",
+        "2.4",
+        "2.5",
+        "2.6",
+        "3.1",
+        "3.2",
+        "3.3"
+      ]
+    }
+  ],
+  "mapping": {
+    "reference_round": "Generlazability",
+    "agreement": {
+      "Round 1": 2,
+      "Round 2/Round 3": 7
+    },
+    "rows": [
+      {
+        "mast": "1.1",
+        "name": "1.1 Disobey Task Specification",
+        "Round 1": {
+          "code": "1.1",
+          "same_code": true,
+          "overlap_chars": 124
+        },
+        "Round 2/Round 3": {
+          "code": "1.1",
+          "same_code": true,
+          "overlap_chars": 124
+        }
+      },
+      {
+        "mast": "1.2",
+        "name": "1.2 Disobey Role Specification",
+        "Round 1": {
+          "code": "2.6",
+          "same_code": false,
+          "overlap_chars": 141
+        },
+        "Round 2/Round 3": {
+          "code": "1.7",
+          "same_code": false,
+          "overlap_chars": 141
+        }
+      },
+      {
+        "mast": "1.3",
+        "name": "1.3 Step Repetition",
+        "Round 1": {
+          "code": "2.2",
+          "same_code": false,
+          "overlap_chars": 124
+        },
+        "Round 2/Round 3": {
+          "code": "1.5",
+          "same_code": false,
+          "overlap_chars": 124
+        }
+      },
+      {
+        "mast": "1.4",
+        "name": "1.4 Loss of Conversation History",
+        "Round 1": {
+          "code": "2.3",
+          "same_code": false,
+          "overlap_chars": 123
+        },
+        "Round 2/Round 3": {
+          "code": "1.6",
+          "same_code": false,
+          "overlap_chars": 123
+        }
+      },
+      {
+        "mast": "1.5",
+        "name": "1.5 Unaware of Termination Conditions",
+        "Round 1": {
+          "code": "1.5",
+          "same_code": true,
+          "overlap_chars": 165
+        },
+        "Round 2/Round 3": {
+          "code": "1.3",
+          "same_code": false,
+          "overlap_chars": 165
+        }
+      },
+      {
+        "mast": "2.1",
+        "name": "2.1 Conversation reset",
+        "Round 1": {
+          "code": "2.4",
+          "same_code": false,
+          "overlap_chars": 116
+        },
+        "Round 2/Round 3": {
+          "code": "2.1",
+          "same_code": true,
+          "overlap_chars": 116
+        }
+      },
+      {
+        "mast": "2.2",
+        "name": "2.2 Fail to ask for clarification",
+        "Round 1": {
+          "code": "1.4",
+          "same_code": false,
+          "overlap_chars": 162
+        },
+        "Round 2/Round 3": {
+          "code": "2.2",
+          "same_code": true,
+          "overlap_chars": 162
+        }
+      },
+      {
+        "mast": "2.3",
+        "name": "2.3 Task derailment",
+        "Round 1": {
+          "code": "2.5",
+          "same_code": false,
+          "overlap_chars": 124
+        },
+        "Round 2/Round 3": {
+          "code": "2.3",
+          "same_code": true,
+          "overlap_chars": 124
+        }
+      },
+      {
+        "mast": "2.4",
+        "name": "2.4 Information Witholding",
+        "Round 1": {
+          "code": "3.2",
+          "same_code": false,
+          "overlap_chars": 184
+        },
+        "Round 2/Round 3": {
+          "code": "2.6",
+          "same_code": false,
+          "overlap_chars": 184
+        }
+      },
+      {
+        "mast": "2.5",
+        "name": "2.5 Ignored Other Agents' Input",
+        "Round 1": {
+          "code": "3.3",
+          "same_code": false,
+          "overlap_chars": 198
+        },
+        "Round 2/Round 3": {
+          "code": "2.7",
+          "same_code": false,
+          "overlap_chars": 198
+        }
+      },
+      {
+        "mast": "2.6",
+        "name": "2.6 Reasoning-Action Mismatch",
+        "Round 1": {
+          "code": "1.2",
+          "same_code": false,
+          "overlap_chars": 152
+        },
+        "Round 2/Round 3": {
+          "code": "1.2",
+          "same_code": false,
+          "overlap_chars": 152
+        }
+      },
+      {
+        "mast": "3.1",
+        "name": "3.1 Premature Termination",
+        "Round 1": {
+          "code": "4.1",
+          "same_code": false,
+          "overlap_chars": 390
+        },
+        "Round 2/Round 3": {
+          "code": "3.1",
+          "same_code": true,
+          "overlap_chars": 390
+        }
+      },
+      {
+        "mast": "3.2",
+        "name": "3.2 No or Incomplete Verification",
+        "Round 1": {
+          "code": "4.3",
+          "same_code": false,
+          "overlap_chars": 446
+        },
+        "Round 2/Round 3": {
+          "code": "3.2",
+          "same_code": true,
+          "overlap_chars": 563
+        }
+      },
+      {
+        "mast": "3.3",
+        "name": "3.3 Incorrect Verification",
+        "Round 1": {
+          "code": "4.2",
+          "same_code": false,
+          "overlap_chars": 211
+        },
+        "Round 2/Round 3": {
+          "code": "3.3",
+          "same_code": true,
+          "overlap_chars": 211
+        }
+      }
+    ]
+  },
+  "human_duplication": {
+    "n_records": 19,
+    "n_distinct_blocks": 8,
+    "n_sharing": 18,
+    "all_within_round": true,
+    "all_cross_framework": true,
+    "groups": [
+      {
+        "hash": "07f422a42ed0",
+        "n": 3,
+        "rounds": [
+          "Round 1"
+        ],
+        "frameworks": [
+          "AG2",
+          "AppWorld",
+          "HyperAgent"
+        ],
+        "members": [
+          "AppWorld::0",
+          "HyperAgent::1",
+          "AG2::2"
+        ]
+      },
+      {
+        "hash": "90c3bdacac14",
+        "n": 3,
+        "rounds": [
+          "Round 2"
+        ],
+        "frameworks": [
+          "AG2",
+          "AppWorld",
+          "HyperAgent"
+        ],
+        "members": [
+          "AppWorld::5",
+          "HyperAgent::6",
+          "AG2::7"
+        ]
+      },
+      {
+        "hash": "cb93c1a8f4e0",
+        "n": 3,
+        "rounds": [
+          "Round 3"
+        ],
+        "frameworks": [
+          "AG2",
+          "AppWorld",
+          "HyperAgent"
+        ],
+        "members": [
+          "HyperAgent::10",
+          "AppWorld::11",
+          "AG2::12"
+        ]
+      },
+      {
+        "hash": "6872e898cf28",
+        "n": 3,
+        "rounds": [
+          "Generlazability"
+        ],
+        "frameworks": [
+          "ChatDev",
+          "GAIA",
+          "MetaGPT"
+        ],
+        "members": [
+          "ChatDev::15",
+          "MetaGPT::16",
+          "GAIA::17"
+        ]
+      },
+      {
+        "hash": "ef673a017baa",
+        "n": 2,
+        "rounds": [
+          "Round 1"
+        ],
+        "frameworks": [
+          "ChatDev",
+          "MetaGPT"
+        ],
+        "members": [
+          "ChatDev::3",
+          "MetaGPT::4"
+        ]
+      },
+      {
+        "hash": "2b6e51b0b4d9",
+        "n": 2,
+        "rounds": [
+          "Round 2"
+        ],
+        "frameworks": [
+          "ChatDev",
+          "MetaGPT"
+        ],
+        "members": [
+          "ChatDev::8",
+          "MetaGPT::9"
+        ]
+      },
+      {
+        "hash": "0585e503554c",
+        "n": 2,
+        "rounds": [
+          "Round 3"
+        ],
+        "frameworks": [
+          "ChatDev",
+          "MetaGPT"
+        ],
+        "members": [
+          "ChatDev::13",
+          "MetaGPT::14"
+        ]
+      }
+    ]
+  },
+  "trace_comparison": [
+    {
+      "tag": "692c77d_1",
+      "github_path": "traces/AppWorld/692c77d_1.txt",
+      "hf_len": 26712,
+      "gh_len": 26712,
+      "identical": true
+    },
+    {
+      "tag": "cf6abd2_1",
+      "github_path": "traces/AppWorld/cf6abd2_1.txt",
+      "hf_len": 34563,
+      "gh_len": 34563,
+      "identical": true
+    },
+    {
+      "tag": "b119b1f_2",
+      "github_path": "traces/AppWorld/b119b1f_1.txt",
+      "hf_len": 33931,
+      "gh_len": 26237,
+      "identical": false
+    }
+  ],
+  "definitions_drift": [
+    {
+      "code": "3.2",
+      "definitions_txt": "Weak Verification",
+      "published": "No or Incomplete Verification"
+    },
+    {
+      "code": "3.3",
+      "definitions_txt": "No or Incorrect Verification",
+      "published": "Incorrect Verification"
+    }
+  ],
+  "full_dataset": {
+    "n_records": 1642,
+    "distinct_traces": 1642,
+    "repeated_trace_records": 0,
+    "distinct_keys": 1522,
+    "colliding_keys": 120,
+    "records_in_collisions": 240,
+    "distinct_label_blocks": 453,
+    "largest_label_block": 401,
+    "largest_block_flagged_modes": [],
+    "records_with_null_label": 4
+  }
+}
