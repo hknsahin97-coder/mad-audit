@@ -130,10 +130,38 @@ substantially above 0.05.
 If it does not rise, the mapping in finding 2 is wrong and findings 1–3 should
 be discarded with it.
 
-This audit deliberately does not run that test: it does not have the
-`llm_annotator.ipynb` outputs the issue was based on. The prediction is stated
-so the claim can be **refuted** rather than argued about. Anyone holding those
-outputs can settle it in an afternoon.
+This audit deliberately does not run the full LLM-vs-human test: it does not
+have the `llm_annotator.ipynb` outputs the issue was based on. The prediction is
+stated so the claim can be **refuted** rather than argued about. Anyone holding
+those outputs can settle it in an afternoon.
+
+### Partial self-contained result (2026-08-24)
+
+[`predict_kappa.py`](predict_kappa.py) runs a self-contained version of the test
+that needs no LLM judge: it scores the human labels against the full set's own
+`mast_annotation` (a MAST-14 0/1 vector), *naive* (literal code number) vs
+*remap* (round-aware, via the finding-2 table).
+
+The instrument is limited by two findings above. The `(mas_name,
+benchmark_name, trace_id)` key is not unique (finding 6) and traces share large
+boilerplate, so most human records cannot be reliably joined to a MAST-14
+reference; a join on that key pairs records whose trace bodies do not match.
+Only the **3 AppWorld records** carry a recoverable task tag (e.g. `692c77d_1`)
+giving a clean 1:1 join — one per Round 1 / 2 / 3.
+
+On those 3 records (42 mode-cells), pooled Cohen's κ:
+
+| projection | κ |
+|---|---|
+| naive (literal code) | **+0.13** |
+| round-aware remap | **+0.27** |
+
+The remap raises κ, in the predicted direction, so the finding-2 mapping is
+**not refuted**. But the entire gain comes from one Round 1 record (human code
+`3.3` → MAST `2.5`, which the reference marks present); the Rounds 2–3 records
+show no change. With n = 3 this is **directional support, not confirmation**.
+The strong test — reproducing the issue #13 κ against `llm_annotator.ipynb`
+output — still requires those judge outputs.
 
 ## 4. Duplicate annotation blocks
 
