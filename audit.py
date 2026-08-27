@@ -369,6 +369,127 @@ def check_definitions(data_dir):
     results["definitions_drift"] = drift
 
 
+# --------------------------------------------------------------------------
+# H. Colliding composite keys: how different are the traces?
+# --------------------------------------------------------------------------
+SIM_CHAR_CAP = 20000          # similarity is computed on this many chars
+MIN_PREFIX = 500              # absolute floor for "shares a long prefix"
+PREFIX_FRACTION = 0.20        # and it must cover this much of the shorter body
+SIM_RATIO = 0.90
+TIERS = ["identical", "normalized_identical", "prefix_shared", "similar",
+         "different"]
+
+
+def trace_body(record):
+    """The trace text of a record, or None if unusable.
+
+    In the full dataset `trace` is an object (`key`, `index`, `trajectory`);
+    in the human-labelled file it is a plain string. Both are accepted.
+    """
+    t = record.get("trace")
+    if isinstance(t, dict):
+        t = t.get("trajectory")
+    return t if isinstance(t, str) and t.strip() else None
+
+
+def _tier(a, b):
+    if a == b:
+        return "identical"
+    na, nb = norm(a), norm(b)
+    if na == nb:
+        return "normalized_identical"
+    shared = 0
+    for x, y in zip(na, nb):
+        if x != y:
+            break
+        shared += 1
+    if shared >= MIN_PREFIX and shared >= PREFIX_FRACTION * min(len(na), len(nb)):
+        return "prefix_shared"
+    if SequenceMatcher(None, na[:SIM_CHAR_CAP],
+                       nb[:SIM_CHAR_CAP]).ratio() >= SIM_RATIO:
+        return "similar"
+    return "different"
+
+
+def check_key_collisions(full):
+    rule("H - Colliding keys: how different are the traces?")
+
+    groups = defaultdict(list)
+    for i, r in enumerate(full):
+        groups[(r.get("mas_name"), r.get("llm_name"), r.get("trace_id"))].append(i)
+    colliding = {k: v for k, v in groups.items() if len(v) > 1}
+
+    pair_tiers, key_tiers = Counter(), Counter()
+    unusable = 0
+    subkey_differs = subkey_same = subkey_missing = 0
+    examples = []
+
+    for key, idxs in colliding.items():
+        best = None
+        for a in range(len(idxs)):
+            for b in range(a + 1, len(idxs)):
+                ra, rb = full[idxs[a]], full[idxs[b]]
+                ba, bb = trace_body(ra), trace_body(rb)
+                if ba is None or bb is None:
+                    unusable += 1
+                    continue
+                tier = _tier(ba, bb)
+                pair_tiers[tier] += 1
+                if best is None or TIERS.index(tier) < TIERS.index(best):
+                    best = tier
+
+                ka = ra.get("trace", {}).get("key") if isinstance(ra.get("trace"), dict) else None
+                kb = rb.get("trace", {}).get("key") if isinstance(rb.get("trace"), dict) else None
+                if ka is None or kb is None:
+                    subkey_missing += 1
+                elif ka != kb:
+                    subkey_differs += 1
+                    if len(examples) < 3:
+                        examples.append({"key": list(key),
+                                         "trace_keys": [ka, kb], "tier": tier})
+                else:
+                    subkey_same += 1
+        if best:
+            key_tiers[best] += 1
+
+    pairs = sum(pair_tiers.values())
+    log(f"  colliding keys: {len(colliding)}   records covered: "
+        f"{sum(len(v) for v in colliding.values())}   pairs compared: {pairs}")
+    log(f"  similarity computed on the first {SIM_CHAR_CAP} chars "
+        f"(tiers 1-3 use the whole body)")
+    for label, counter, total in (("pair", pair_tiers, pairs),
+                                  ("key ", key_tiers, len(colliding))):
+        cells = "  ".join(
+            f"{t}={counter[t]} ({100.0 * counter[t] / total:.1f}%)"
+            if total else f"{t}=0" for t in TIERS)
+        log(f"  {label} level: {cells}")
+    if unusable:
+        log(f"  pairs skipped, trace unusable: {unusable}")
+
+    log(f"  of {pairs} colliding pairs, trace['key'] differs in "
+        f"{subkey_differs}, matches in {subkey_same}, missing in {subkey_missing}")
+    for e in examples:
+        log(f"    {tuple(e['key'])} -> {e['trace_keys'][0]} | "
+            f"{e['trace_keys'][1]}  ({e['tier']})")
+    if pairs and subkey_differs == pairs:
+        log("    -> every collision is explained by a scenario id the "
+            "composite key omits; the traces are different runs, not copies")
+
+    results["key_collisions"] = {
+        "colliding_keys": len(colliding),
+        "records_covered": sum(len(v) for v in colliding.values()),
+        "pairs_compared": pairs,
+        "pair_tiers": {t: pair_tiers[t] for t in TIERS},
+        "key_tiers": {t: key_tiers[t] for t in TIERS},
+        "pairs_skipped_unusable": unusable,
+        "trace_key_differs": subkey_differs,
+        "trace_key_same": subkey_same,
+        "trace_key_missing": subkey_missing,
+        "similarity_char_cap": SIM_CHAR_CAP,
+        "examples": examples,
+    }
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--data", default=os.path.join(os.path.dirname(os.path.abspath(__file__)), "data"))
@@ -402,6 +523,7 @@ def main():
         with open(paths["full"], encoding="utf-8") as f:
             full = json.load(f)
         check_full(full)
+        check_key_collisions(full)
 
     if args.json_out:
         with open(args.json_out, "w", encoding="utf-8") as f:

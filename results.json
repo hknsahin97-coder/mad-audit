@@ -463,5 +463,67 @@
     "largest_label_block": 401,
     "largest_block_flagged_modes": [],
     "records_with_null_label": 4
+  },
+  "key_collisions": {
+    "colliding_keys": 120,
+    "records_covered": 240,
+    "pairs_compared": 120,
+    "pair_tiers": {
+      "identical": 0,
+      "normalized_identical": 0,
+      "prefix_shared": 15,
+      "similar": 8,
+      "different": 97
+    },
+    "key_tiers": {
+      "identical": 0,
+      "normalized_identical": 0,
+      "prefix_shared": 15,
+      "similar": 8,
+      "different": 97
+    },
+    "pairs_skipped_unusable": 0,
+    "trace_key_differs": 120,
+    "trace_key_same": 0,
+    "trace_key_missing": 0,
+    "similarity_char_cap": 20000,
+    "examples": [
+      {
+        "key": [
+          "ChatDev",
+          "GPT-4o",
+          0
+        ],
+        "trace_keys": [
+          "ChatDev_ProgramDev_GPT4o",
+          "ChatDev_ProgramDev2_GPT4o"
+        ],
+        "tier": "different"
+      },
+      {
+        "key": [
+          "ChatDev",
+          "GPT-4o",
+          1
+        ],
+        "trace_keys": [
+          "ChatDev_ProgramDev_GPT4o",
+          "ChatDev_ProgramDev2_GPT4o"
+        ],
+        "tier": "different"
+      },
+      {
+        "key": [
+          "ChatDev",
+          "GPT-4o",
+          2
+        ],
+        "trace_keys": [
+          "ChatDev_ProgramDev_GPT4o",
+          "ChatDev_ProgramDev2_GPT4o"
+        ],
+        "tier": "different"
+      }
+    ]
   }
 }

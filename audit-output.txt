@@ -103,4 +103,17 @@ E - Full dataset integrity
     -> label vector is 14-bit; repetition is expected, NOT a defect on its own
   records containing a null label: 4
 
+========================================================================
+H - Colliding keys: how different are the traces?
+========================================================================
+  colliding keys: 120   records covered: 240   pairs compared: 120
+  similarity computed on the first 20000 chars (tiers 1-3 use the whole body)
+  pair level: identical=0 (0.0%)  normalized_identical=0 (0.0%)  prefix_shared=15 (12.5%)  similar=8 (6.7%)  different=97 (80.8%)
+  key  level: identical=0 (0.0%)  normalized_identical=0 (0.0%)  prefix_shared=15 (12.5%)  similar=8 (6.7%)  different=97 (80.8%)
+  of 120 colliding pairs, trace['key'] differs in 120, matches in 0, missing in 0
+    ('ChatDev', 'GPT-4o', 0) -> ChatDev_ProgramDev_GPT4o | ChatDev_ProgramDev2_GPT4o  (different)
+    ('ChatDev', 'GPT-4o', 1) -> ChatDev_ProgramDev_GPT4o | ChatDev_ProgramDev2_GPT4o  (different)
+    ('ChatDev', 'GPT-4o', 2) -> ChatDev_ProgramDev_GPT4o | ChatDev_ProgramDev2_GPT4o  (different)
+    -> every collision is explained by a scenario id the composite key omits; the traces are different runs, not copies
+
 machine-readable output: results.json

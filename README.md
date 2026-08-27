@@ -203,6 +203,19 @@ than both the paper and the maintained dataset card.
 (e.g. `('ChatDev', 'GPT-4o', 0)` appears twice). Issue #14 used this triple as a
 deduplication key; that assumption does not hold on the current file either.
 
+**What the collisions are (check H, added 2026-08-27).** Comparing the trace
+bodies of all 120 colliding pairs: **none are identical**, 15 share a long
+prefix, 8 are near-duplicates, and **97 (80.8%) are unrelated traces**. The
+cause is not duplication but an omitted field: in **120 of 120** colliding
+pairs the records carry a *different* `trace["key"]` — the scenario id the
+composite key leaves out (e.g. `ChatDev_ProgramDev_GPT4o` vs
+`ChatDev_ProgramDev2_GPT4o`).
+
+So the triple is not "unreliable"; it is **incomplete**. A consumer that needs
+a unique key should use `(mas_name, llm_name, trace_id, trace["key"])`, which
+is unique across the full set. This also explains why finding 7 holds — all
+1642 trace bodies are distinct — without contradicting finding 6.
+
 ## 7. Resolved: trace-body replication
 
 All **1642/1642** trace bodies in the full set are distinct — zero repeats. The
