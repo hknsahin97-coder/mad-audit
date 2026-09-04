@@ -370,6 +370,104 @@ def check_definitions(data_dir):
 
 
 # --------------------------------------------------------------------------
+# I. The shipped LLM-judge prompt vs the taxonomy it claims to use
+# --------------------------------------------------------------------------
+NOTEBOOK = "llm_judge_pipeline.ipynb"
+
+# Lines of the prompt's answer schema:  "1.1 Disobey Task Specification: <yes or no>"
+SCHEMA_LINE = re.compile(r'"\s*([0-9]\.[0-9])\s+([^:"]+?)\s*:\s*<yes or no>')
+# Lines of the prompt's few-shot answer:  "1.6 yes \n"
+SHOT_LINE = re.compile(r'"\s*([0-9]\.[0-9])\s+(yes|no)\s*\\n?\s*"')
+
+
+def _round_taxonomies(human):
+    """{round label: {code: name}} for every taxonomy generation in the file."""
+    out = {}
+    for rec in human:
+        tax = parse_taxonomy(rec["annotations"])
+        out.setdefault(rec["round"], {
+            c: (n[len(c):].strip() if n.startswith(c) else n)
+            for c, (n, _d) in tax.items()})
+    return out
+
+
+def check_judge_prompt(human, data_dir):
+    rule("I - Shipped LLM-judge prompt vs the taxonomy it asks for")
+    local = os.path.join(data_dir, "gh", NOTEBOOK)
+    try:
+        fetch(f"{GH_RAW}/{NOTEBOOK}", local)
+    except Exception as exc:  # noqa: BLE001
+        log(f"  could not fetch: {exc}")
+        return
+    with open(local, encoding="utf-8", errors="replace") as f:
+        nb = json.load(f)
+    src = "\n".join("".join(c.get("source", [])) for c in nb.get("cells", [])
+                    if c.get("cell_type") == "code")
+
+    schema = dict(SCHEMA_LINE.findall(src))
+    shot = dict(SHOT_LINE.findall(src))
+    if not schema or not shot:
+        log("  prompt not found in the notebook; upstream may have restructured it")
+        return
+
+    log(f"  answer schema in the prompt : {len(schema)} codes "
+        f"({', '.join(sorted(schema, key=lambda c: [int(x) for x in c.split('.')]))})")
+    log(f"  few-shot example answers    : {len(shot)} codes")
+    log()
+
+    # I.1 - codes the example emits that the prompt never asked for
+    taxes = _round_taxonomies(human)
+    stray = sorted(set(shot) - set(schema),
+                   key=lambda c: [int(x) for x in c.split(".")])
+    log("  I.1 codes answered in the few-shot example but absent from the schema")
+    if not stray:
+        log("      none")
+    for code in stray:
+        homes = [f"{rnd} = {tax[code]}" for rnd, tax in taxes.items()
+                 if code in tax and rnd != "Generlazability"]
+        log(f"      {code} -> not in schema; defined in: "
+            f"{'; '.join(homes) if homes else 'no round in the human file'}")
+
+    # I.2 - the schema's own names vs the definitions.txt the same prompt loads
+    defs_path = os.path.join(data_dir, "gh", "definitions.txt")
+    swapped = []
+    if os.path.exists(defs_path):
+        with open(defs_path, encoding="utf-8", errors="replace") as f:
+            dtext = f.read()
+        dnames = {}
+        for m in re.finditer(r"^\s*([0-9]\.[0-9])\s+([^:\n]+):", dtext, re.M):
+            dnames.setdefault(m.group(1), m.group(2).strip())
+        log()
+        log("  I.2 prompt schema vs definitions.txt appended to the SAME prompt")
+        log(f"      {'code':6}{'prompt schema':<34}{'definitions.txt'}")
+        for code in sorted(set(schema) & set(dnames),
+                           key=lambda c: [int(x) for x in c.split(".")]):
+            a, b = schema[code], dnames[code]
+            same = norm(a)[:12] == norm(b)[:12]
+            if not same:
+                # is it a straight swap with a neighbouring code?
+                partner = next((o for o in schema
+                                if o != code and norm(schema[o])[:12] == norm(b)[:12]
+                                and norm(dnames.get(o, ""))[:12] == norm(a)[:12]), None)
+                swapped.append({"code": code, "prompt": a,
+                                "definitions_txt": b, "swapped_with": partner})
+                log(f"      {code:6}{a:<34}{b}   DIFFERS"
+                    f"{f' (swapped with {partner})' if partner else ''}")
+        if not swapped:
+            log("      all matching codes agree")
+
+    results["judge_prompt"] = {
+        "schema_codes": sorted(schema),
+        "few_shot_codes": sorted(shot),
+        "stray_codes": [
+            {"code": c,
+             "defined_in": {rnd: tax[c] for rnd, tax in taxes.items() if c in tax}}
+            for c in stray],
+        "schema_vs_definitions_mismatch": swapped,
+    }
+
+
+# --------------------------------------------------------------------------
 # H. Colliding composite keys: how different are the traces?
 # --------------------------------------------------------------------------
 SIM_CHAR_CAP = 20000          # similarity is computed on this many chars
@@ -518,6 +616,7 @@ def main():
     check_human_duplication(human)
     check_traces(human, args.data)
     check_definitions(args.data)
+    check_judge_prompt(human, args.data)
 
     if "full" in paths:
         with open(paths["full"], encoding="utf-8") as f:

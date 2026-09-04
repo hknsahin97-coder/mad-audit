@@ -452,6 +452,72 @@
       "published": "Incorrect Verification"
     }
   ],
+  "judge_prompt": {
+    "schema_codes": [
+      "1.1",
+      "1.2",
+      "1.3",
+      "1.4",
+      "1.5",
+      "2.1",
+      "2.2",
+      "2.3",
+      "2.4",
+      "2.5",
+      "2.6",
+      "3.1",
+      "3.2",
+      "3.3"
+    ],
+    "few_shot_codes": [
+      "1.1",
+      "1.2",
+      "1.3",
+      "1.4",
+      "1.5",
+      "1.6",
+      "2.1",
+      "2.2",
+      "2.3",
+      "2.4",
+      "2.5",
+      "2.6",
+      "2.7",
+      "3.1",
+      "3.2",
+      "3.3"
+    ],
+    "stray_codes": [
+      {
+        "code": "1.6",
+        "defined_in": {
+          "Round 2": "Backtracking interruption",
+          "Round 3": "Backtracking interruption"
+        }
+      },
+      {
+        "code": "2.7",
+        "defined_in": {
+          "Round 2": "Ignoring suggestions from agents",
+          "Round 3": "Ignoring suggestions from agents"
+        }
+      }
+    ],
+    "schema_vs_definitions_mismatch": [
+      {
+        "code": "3.2",
+        "prompt": "No or Incorrect Verification",
+        "definitions_txt": "Weak Verification",
+        "swapped_with": "3.3"
+      },
+      {
+        "code": "3.3",
+        "prompt": "Weak Verification",
+        "definitions_txt": "No or Incorrect Verification",
+        "swapped_with": "3.2"
+      }
+    ]
+  },
   "full_dataset": {
     "n_records": 1642,
     "distinct_traces": 1642,

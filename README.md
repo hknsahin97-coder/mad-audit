@@ -12,7 +12,7 @@ Reported upstream: [MAST issue #18](https://github.com/multi-agent-systems-failu
 
 ```bash
 python audit.py                  # downloads to ./data if absent, prints the report
-python audit.py --skip-full      # skip the 199 MB file (checks A–D, F, G)
+python audit.py --skip-full      # skip the 199 MB file (checks A–D, F, G, I)
 python audit.py --json out.json  # machine-readable results
 ```
 
@@ -41,6 +41,7 @@ localised to a version difference rather than a method difference:
 | 6 | `(mas_name, llm_name, trace_id)` is **not unique** in the full set: 120 keys over 240 records | open |
 | 7 | Trace-body replication in the full set | **resolved** by the 2026-08-13 rebuild |
 | 8 | Repeated `mast_annotation` blocks in the full set | **not a defect** — see below |
+| 9 | The judge prompt's "stray" codes (issue #12) are **not stray**: they are Rounds 2–3 codes, so findings 1–3 reach the pipeline too | open |
 
 Findings 1–3 are one problem seen from three sides. Finding 3 offers a simpler
 explanation for the κ = 0.05 reported in
@@ -191,10 +192,16 @@ independent, the effective number of distinct observations is 8, not 19.
 | 3.2 | **Weak Verification** | No or Incomplete Verification |
 | 3.3 | **No or Incorrect Verification** | Incorrect Verification |
 
-`llm_annotator.ipynb` feeds this file to the judge. This confirms
+`llm_judge_pipeline.ipynb` feeds this file to the judge. This confirms
 [issue #12](https://github.com/multi-agent-systems-failure-taxonomy/MAST/issues/12)
 from a third source: the repo's definitions are a different taxonomy generation
-than both the paper and the maintained dataset card.
+than both the paper and the maintained dataset card. Finding 9 shows the same
+drift *inside* the prompt itself.
+
+> Naming note: issues #12 and #13, and earlier versions of this README, call the
+> judge notebook `llm_annotator.ipynb`. No file by that name exists in the repo
+> tree at the audited commit; the notebook is `llm_judge_pipeline.ipynb`. Checks
+> G and I read the file that is actually there.
 
 ## 6. Composite key is not unique in the full set
 
@@ -240,6 +247,74 @@ whether those are missing or negative.
 The distinction matters: finding 4 is suspicious because human annotations of
 different traces collided; this is just the arithmetic of a short label vector.
 
+## 9. The judge prompt's "stray" codes are a taxonomy fossil, not typos
+
+**Credit where it belongs.** Both observations in this section were reported
+first, and independently of this audit, by **@manuel114** in
+[issue #12](https://github.com/multi-agent-systems-failure-taxonomy/MAST/issues/12)
+(2026-05-06): the 3.2/3.3 swap between the prompt and `definitions.txt`, and the
+`1.6` / `2.7` codes in the few-shot example. Check I does not discover them.
+
+What check I adds is one correction and one consequence:
+
+- Issue #12 describes `1.6` and `2.7` as codes that "don't exist" and "appear
+  nowhere else in the prompt, in `definitions.txt`, or in the paper's taxonomy",
+  and proposes deleting them. **They do exist.** They are live codes in the
+  Rounds 2–3 taxonomy carried by `MAD_human_labelled_dataset.json` (finding 1).
+- That makes them a symptom of the same undocumented taxonomy migration as
+  findings 1–3, reaching the *pipeline* rather than only the *data* — and it
+  changes the fix. Deleting two lines removes the trace of the migration while
+  leaving the migration itself unrecorded.
+
+Everything below is produced by check I from `llm_judge_pipeline.ipynb` as
+served upstream, so it stays checkable if the file changes.
+
+The prompt asks the judge for exactly 14 codes — MAST-14. Its own worked
+example then answers **16**:
+
+| | codes | source |
+|---|---|---|
+| answer schema the prompt requests | 14 | `1.1`–`1.5`, `2.1`–`2.6`, `3.1`–`3.3` |
+| codes the few-shot example answers | 16 | the same 14, **plus `1.6` and `2.7`** |
+
+Where the two extra codes come from:
+
+| stray code | Rounds 2–3 meaning | exists in MAST-14? |
+|---|---|---|
+| `1.6` | Backtracking interruption | no |
+| `2.7` | Ignoring suggestions from agents | no |
+
+So the demonstration the judge is shown was written under an earlier generation
+of the taxonomy than the answer sheet it is asked to fill.
+
+**The 3.2/3.3 swap (issue #12), reproduced mechanically.** The same API call
+carries the prompt and the definitions file, and on the verification pair they
+are exact opposites:
+
+| code | prompt's answer schema | `definitions.txt`, appended below it |
+|---|---|---|
+| 3.2 | No or Incorrect Verification | **Weak Verification** |
+| 3.3 | Weak Verification | **No or Incorrect Verification** |
+
+This is a straight swap, detected as such by check I. Neither ordering matches
+the published MAST-14 (`3.2` No or Incomplete Verification, `3.3` Incorrect
+Verification), so a judge run this way is choosing between two labellings, and
+both differ from the one its output is scored against.
+
+### Why this matters for issue #13
+
+[Issue #13](https://github.com/multi-agent-systems-failure-taxonomy/MAST/issues/13)
+reports that published `failure_modes` are inconsistent with the repo's own
+judge outputs. Findings 1–3 offer one mechanism for that: the *human* side of
+the comparison speaks three taxonomies. Finding 9 adds a second, independent
+mechanism on the *machine* side: the judge is prompted with mixed-generation
+labels. The two mechanisms are consistent with each other, they have the same
+root cause — an undocumented taxonomy migration — and neither requires the
+"different trace set" hypothesis.
+
+`examples.txt`, checked in the same pass, refers to modes by name rather than
+code, so it does not carry the drift.
+
 ## Trace provenance (context, not a finding)
 
 Where GitHub `traces/` and the HF records overlap they agree byte-for-byte
@@ -264,6 +339,15 @@ files carry no task tag.
 - Coverage: findings 4 and 6 are exhaustive over their files. The trace
   comparison samples three records, not all 19 — only AppWorld traces carry
   recoverable identifiers.
+- Finding 9 is a defect in the prompt as shipped. It does **not** show what the
+  judge actually output, or by how much the mixed-generation few-shot shifts a
+  run: measuring that needs the judge re-run, and this audit has no API access
+  to `o1`. What finding 9 does establish is that the pipeline contains a second,
+  independent path to the same disagreement — one that is checkable without
+  running anything.
+- Finding 9 audits `llm_judge_pipeline.ipynb` at the repo's current HEAD
+  (last pushed 2025-07-23). If the judge that produced the paper's numbers was a
+  different notebook, this finding describes the published one, not that run.
 
 ## Licence
 

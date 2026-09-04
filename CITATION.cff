@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+title: "MAD dataset audit: three undocumented taxonomy generations in the MAST failure-mode data and pipeline"
+message: "If you use the MAD dataset for code-level comparison, please cite this audit alongside the dataset."
+type: software
+authors:
+  - family-names: "Sahin"
+    given-names: "Hakan"
+    alias: "hknsahin97-coder"
+repository-code: "https://github.com/hknsahin97-coder/mad-audit"
+license: MIT
+date-released: "2026-08-23"
+keywords:
+  - multi-agent-systems
+  - llm-evaluation
+  - dataset-audit
+  - reproducibility
+  - inter-annotator-agreement
+  - failure-taxonomy
+abstract: >-
+  An independent, reproducible audit of the MAD dataset released with
+  "Why Do Multi-Agent LLM Systems Fail?" (arXiv:2503.13657). The audit shows
+  that MAD_human_labelled_dataset.json carries three different generations of
+  the failure taxonomy (18, 17 and 14 modes) with silently renumbered codes, so
+  pooled code-level comparison against the published MAST-14 is invalid for 15
+  of its 19 records. It further shows that the shipped LLM-judge prompt answers
+  in a taxonomy it does not ask for, and contradicts the definitions file it
+  appends to itself. Every reported number is produced by a single stdlib-only
+  script that downloads the audited files itself and prints their SHA-256.
+references:
+  - type: article
+    title: "Why Do Multi-Agent LLM Systems Fail?"
+    url: "https://arxiv.org/abs/2503.13657"
+  - type: data
+    title: "mcemri/MAST-Data"
+    url: "https://huggingface.co/datasets/mcemri/MAST-Data"
